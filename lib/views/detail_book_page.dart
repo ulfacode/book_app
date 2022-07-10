@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:book_app/models/book_detail_response.dart';
+import 'package:book_app/models/book_list_response.dart';
 import 'package:book_app/views/image_view_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -26,6 +27,23 @@ class _DetailBookPageState extends State<DetailBookPage> {
     if (response.statusCode == 200) {
       final jsonDetail = jsonDecode(response.body);
       detailBook = BookDetailResponse.fromJson(jsonDetail);
+      setState(() {});
+      fetchSimiliarBookApi(detailBook!.title!);
+    }
+
+    // print(await http.read(Uri.parse('https://example.com/foobar.txt')));
+  }
+
+  BookListResponse? similiarBooks;
+  fetchSimiliarBookApi(String title) async {
+    var url = Uri.parse('https://api.itbook.store/1.0/search/${title}');
+    var response = await http.get(url);
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      final jsonDetail = jsonDecode(response.body);
+      similiarBooks = BookListResponse.fromJson(jsonDetail);
       setState(() {});
     }
 
@@ -97,9 +115,10 @@ class _DetailBookPageState extends State<DetailBookPage> {
                                   5,
                                   (index) => Icon(
                                     Icons.star,
-                                    color: index < int.parse(detailBook!.rating!)
-                                        ? Colors.yellow
-                                        : Colors.grey,
+                                    color:
+                                        index < int.parse(detailBook!.rating!)
+                                            ? Colors.yellow
+                                            : Colors.grey,
                                   ),
                                 ),
                               ),
@@ -148,6 +167,41 @@ class _DetailBookPageState extends State<DetailBookPage> {
                       // Text(detailBook!.rating!),
                     ],
                   ),
+                  Divider(),
+                  similiarBooks == null
+                      ? CircularProgressIndicator()
+                      : Container(
+                          height: 180,
+                          child: ListView.builder(
+                            // shrinkWrap: true,
+                            scrollDirection: Axis.horizontal,
+                            itemCount: similiarBooks!.books!.length,
+                            // physics: NeverScrollableScrollPhysics(),
+                            itemBuilder: (context, index) {
+                              final current = similiarBooks!.books![index];
+                              return Container(
+                                width: 100,
+                                child: Column(
+                                  children: [
+                                    Image.network(
+                                      current.image!,
+                                      height: 100,
+                                    ),
+                                    Text(
+                                      current.title!,
+                                      maxLines: 3,
+                                      textAlign: TextAlign.center,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ),
                 ],
               ),
             ),
