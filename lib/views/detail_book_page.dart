@@ -135,11 +135,11 @@ class _DetailBookPageState extends State<DetailBookPage> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Text("Year ${controller.detailBook!.year!}"),
-                        Text("ISBN ${controller.detailBook!.isbn10!}"),
-                        Text("${controller.detailBook!.pages!} Page"),
-                        Text("Publisher:${controller.detailBook!.publisher!}"),
-                        Text("Language:${controller.detailBook!.language!}"),
+                        Text("Year " + controller.detailBook!.year!),
+                        Text("ISBN " + controller.detailBook!.isbn10!),
+                        Text(controller.detailBook!.pages! + " Page"),
+                        Text("Publisher:" + controller.detailBook!.publisher!),
+                        Text("Language:" + controller.detailBook!.language!),
 
                         // Text(detailBook!.rating!),
                       ],
